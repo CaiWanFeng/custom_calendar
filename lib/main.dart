@@ -32,7 +32,11 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedYear = DateTime.now().year;
   int _selectedMonth = DateTime.now().month;
 
-  List<DayModel> dayArray = [];
+  /// 后台返回的数据
+  List<DayModel> _dayArray = [];
+
+  /// 处于选中状态的日期
+  List<DateModel> _selectedDateArray = [];
 
   @override
   void initState() {
@@ -163,11 +167,22 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildCell({
     required int day,
   }) {
-    for (final dayModel in dayArray) {
-      final array = dayModel.date.split('/');
+    final cellDate = DateModel();
+    cellDate.year = _selectedYear;
+    cellDate.month = _selectedMonth;
+    cellDate.day = day;
+
+    bool isSelected = false;
+    if (_selectedDateArray.contains(cellDate)) {
+      isSelected = true;
+    }
+
+    for (final model in _dayArray) {
+      final array = model.date.split('/');
       final modelYear = int.parse(array.first);
       final modelMonth = int.parse(array[1]);
       final modelDay = int.parse(array.last);
+      // 有后台数据的cell
       if (_selectedYear == modelYear &&
           _selectedMonth == modelMonth &&
           day == modelDay) {
@@ -175,34 +190,52 @@ class _MyHomePageState extends State<MyHomePage> {
         return GestureDetector(
           child: Container(
             alignment: Alignment.center,
-            color: _hexColor(dayModel.bgColor),
+            decoration: BoxDecoration(
+              color: _hexColor(model.bgColor),
+              border: Border.all(
+                color: isSelected
+                    ? Theme.of(context).colorScheme.secondary
+                    : Colors.transparent,
+              ),
+            ),
             child: Text(
               day.toString(),
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 18,
-                color: _hexColor(dayModel.fontColor),
+                color: _hexColor(model.fontColor),
               ),
             ),
           ),
           onTap: () {
-            print(dayModel.id);
+            print(model.id);
+            _clickCell(day);
           },
         );
       }
     }
-    // 默认显示的cell
-    return Container(
-      alignment: Alignment.center,
-      color: Colors.white,
-      child: Text(
-        day.toString(),
-        style: const TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: 16,
-          color: Colors.black,
+    // 没有后台数据的cell
+    return GestureDetector(
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(
+            color: isSelected
+                ? Theme.of(context).colorScheme.secondary
+                : Colors.transparent,
+          ),
+        ),
+        child: Text(
+          day.toString(),
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+            color: Colors.black,
+          ),
         ),
       ),
+      onTap: () => _clickCell(day),
     );
   }
 
@@ -221,7 +254,22 @@ class _MyHomePageState extends State<MyHomePage> {
     model2.id = '111';
 
     setState(() {
-      dayArray = [model1, model2];
+      _dayArray = [model1, model2];
+    });
+  }
+
+  /// 点击cell
+  void _clickCell(int day) {
+    final date = DateModel();
+    date.year = _selectedYear;
+    date.month = _selectedMonth;
+    date.day = day;
+    setState(() {
+      if (_selectedDateArray.contains(date)) {
+        _selectedDateArray.remove(date);
+      } else {
+        _selectedDateArray.add(date);
+      }
     });
   }
 
@@ -265,9 +313,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Container(
                   alignment: Alignment.center,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
                     decoration: BoxDecoration(
-                      color: _selectedYear == yearArray[index] ? Colors.yellow : Colors.white,
+                      color: _selectedYear == yearArray[index]
+                          ? Colors.yellow
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
@@ -306,6 +357,31 @@ class _MyHomePageState extends State<MyHomePage> {
         _selectedMonth = 1;
       }
     });
+    final date1 = DateModel();
+    date1.year = 11;
+    date1.month = 11;
+    date1.day = 11;
+
+    final date2 = DateModel();
+    date2.year = 11;
+    date2.month = 11;
+    date2.day = 11;
+
+    final date3 = DateModel();
+    date3.year = 11;
+    date3.month = 11;
+    date3.day = 11;
+
+    final arr = [date1, date2];
+    arr.remove(date3);
+    print(arr.length);
+
+    // assert(date1 == date2);
+    // if (date1 == date2) {
+    //   print('相等');
+    // } else {
+    //   print('不相等');
+    // }
   }
 
   /// 当前月有多少天
@@ -330,4 +406,22 @@ class DayModel {
   late String date;
   late String bgColor;
   late String id;
+}
+
+class DateModel {
+  int year = 0;
+  int month = 0;
+  int day = 0;
+
+  // 重写操作符
+  @override
+  bool operator ==(Object other) {
+    final otherDate = other as DateModel;
+    if (year == otherDate.year &&
+        month == otherDate.month &&
+        day == otherDate.day) {
+      return true;
+    }
+    return false;
+  }
 }
