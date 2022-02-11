@@ -139,26 +139,44 @@ class _MyHomePageState extends State<MyHomePage> {
   /// 日view
   Widget _buildGridView(BuildContext context) {
     return Expanded(
-      child: GridView.builder(
-        itemCount: _getDaysInMonth() + _getSpaceNum(),
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          //横轴元素个数
-          crossAxisCount: 7,
-          //纵轴间距
-          mainAxisSpacing: 2,
-          //横轴间距
-          crossAxisSpacing: 2,
-          //子组件宽高长度比例
-          childAspectRatio: 1.0,
-        ),
-        itemBuilder: (BuildContext context, int index) {
-          //Widget Function(BuildContext context, int index)
-          return Visibility(
-            visible: index >= _getSpaceNum(),
-            child: _buildCell(day: index - _getSpaceNum() + 1),
-          );
+      child: GestureDetector(
+        onPanEnd: (DragEndDetails s){
+          print('end');
+          if(s.velocity.pixelsPerSecond.dx > 0){
+            print('向右扫');
+            setState(() {
+              _minusMonth();
+            });
+          }
+          if(s.velocity.pixelsPerSecond.dx < 0){
+            print('向左扫');
+            setState(() {
+              _addMonth();
+            });
+          }
+          print(s.velocity);
         },
+        child: GridView.builder(
+          itemCount: _getDaysInMonth() + _getSpaceNum(),
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            //横轴元素个数
+            crossAxisCount: 7,
+            //纵轴间距
+            mainAxisSpacing: 2,
+            //横轴间距
+            crossAxisSpacing: 2,
+            //子组件宽高长度比例
+            childAspectRatio: 1.0,
+          ),
+          itemBuilder: (BuildContext context, int index) {
+            //Widget Function(BuildContext context, int index)
+            return Visibility(
+              visible: index >= _getSpaceNum(),
+              child: _buildCell(day: index - _getSpaceNum() + 1),
+            );
+          },
+        ),
       ),
     );
   }
@@ -190,9 +208,12 @@ class _MyHomePageState extends State<MyHomePage> {
         return GestureDetector(
           child: Container(
             alignment: Alignment.center,
+            clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
               color: _hexColor(model.bgColor),
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(
+                width: 2,
                 color: isSelected
                     ? Theme.of(context).colorScheme.secondary
                     : Colors.transparent,
@@ -214,13 +235,17 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       }
     }
+
     // 没有后台数据的cell
     return GestureDetector(
       child: Container(
         alignment: Alignment.center,
+        clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
           color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(
+            width: 2,
             color: isSelected
                 ? Theme.of(context).colorScheme.secondary
                 : Colors.transparent,
