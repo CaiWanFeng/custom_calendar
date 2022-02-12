@@ -140,15 +140,15 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildGridView(BuildContext context) {
     return Expanded(
       child: GestureDetector(
-        onPanEnd: (DragEndDetails s){
+        onPanEnd: (DragEndDetails s) {
           print('end');
-          if(s.velocity.pixelsPerSecond.dx > 0){
+          if (s.velocity.pixelsPerSecond.dx > 0) {
             print('向右扫');
             setState(() {
               _minusMonth();
             });
           }
-          if(s.velocity.pixelsPerSecond.dx < 0){
+          if (s.velocity.pixelsPerSecond.dx < 0) {
             print('向左扫');
             setState(() {
               _addMonth();
@@ -302,7 +302,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _selectYear(BuildContext context) {
     print('年');
     final yearArray = <int>[];
-    for (int i = 2014; i <= 2028; i++) {
+    for (int i = 1998; i <= 2050; i++) {
       yearArray.add(i);
     }
     showModalBottomSheet(
@@ -310,53 +310,16 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (context) {
         return Container(
+          height: 300,
           color: Colors.white,
-          child: GridView.builder(
-            shrinkWrap: true,
-            itemCount: yearArray.length,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              //横轴元素个数
-              crossAxisCount: 3,
-              //纵轴间距
-              mainAxisSpacing: 2,
-              //横轴间距
-              crossAxisSpacing: 2,
-              //子组件宽高长度比例
-              childAspectRatio: 3.0,
-            ),
-            itemBuilder: (BuildContext context, int index) {
-              //Widget Function(BuildContext context, int index)
-              return GestureDetector(
-                onTap: () {
-                  print('tap');
-                  setState(() {
-                    _selectedYear = yearArray[index];
-                    Navigator.pop(context);
-                  });
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: _selectedYear == yearArray[index]
-                          ? Colors.yellow
-                          : Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      yearArray[index].toString(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
-              );
+          child: CupertinoDatePicker(
+            initialDateTime: DateTime(_selectedYear, _selectedMonth),
+            mode: CupertinoDatePickerMode.date,
+            onDateTimeChanged: (DateTime value) {
+              setState(() {
+                _selectedYear = value.year;
+                _selectedMonth = value.month;
+              });
             },
           ),
         );
@@ -449,4 +412,7 @@ class DateModel {
     }
     return false;
   }
+
+  @override
+  int get hashCode => year.hashCode ^ month.hashCode ^ day.hashCode;
 }
