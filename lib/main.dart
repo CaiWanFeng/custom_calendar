@@ -138,45 +138,44 @@ class _MyHomePageState extends State<MyHomePage> {
 
   /// 日view
   Widget _buildGridView(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onPanEnd: (DragEndDetails s) {
-          print('end');
-          if (s.velocity.pixelsPerSecond.dx > 0) {
-            print('向右扫');
-            setState(() {
-              _minusMonth();
-            });
-          }
-          if (s.velocity.pixelsPerSecond.dx < 0) {
-            print('向左扫');
-            setState(() {
-              _addMonth();
-            });
-          }
-          print(s.velocity);
-        },
-        child: GridView.builder(
-          itemCount: _getDaysInMonth() + _getSpaceNum(),
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            //横轴元素个数
-            crossAxisCount: 7,
-            //纵轴间距
-            mainAxisSpacing: 2,
-            //横轴间距
-            crossAxisSpacing: 2,
-            //子组件宽高长度比例
-            childAspectRatio: 1.0,
-          ),
-          itemBuilder: (BuildContext context, int index) {
-            //Widget Function(BuildContext context, int index)
-            return Visibility(
-              visible: index >= _getSpaceNum(),
-              child: _buildCell(day: index - _getSpaceNum() + 1),
-            );
-          },
+    return GestureDetector(
+      onPanEnd: (DragEndDetails s) {
+        print('end');
+        if (s.velocity.pixelsPerSecond.dx > 0) {
+          print('向右扫');
+          setState(() {
+            _minusMonth();
+          });
+        }
+        if (s.velocity.pixelsPerSecond.dx < 0) {
+          print('向左扫');
+          setState(() {
+            _addMonth();
+          });
+        }
+        print(s.velocity);
+      },
+      child: GridView.builder(
+        itemCount: _getDaysInMonth() + _getSpaceNum(),
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          //横轴元素个数
+          crossAxisCount: 7,
+          //纵轴间距
+          mainAxisSpacing: 2,
+          //横轴间距
+          crossAxisSpacing: 2,
+          //子组件宽高长度比例
+          childAspectRatio: 1.0,
         ),
+        itemBuilder: (BuildContext context, int index) {
+          //Widget Function(BuildContext context, int index)
+          return Visibility(
+            visible: index >= _getSpaceNum(),
+            child: _buildCell(day: index - _getSpaceNum() + 1),
+          );
+        },
       ),
     );
   }
