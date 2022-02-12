@@ -293,7 +293,13 @@ class _MyHomePageState extends State<MyHomePage> {
       if (_selectedDateArray.contains(date)) {
         _selectedDateArray.remove(date);
       } else {
-        _selectedDateArray.add(date);
+        if (_selectedDateArray.isEmpty) {
+          _selectedDateArray.add(date);
+        } else {
+          // 选中状态的cell只能有一个
+          _selectedDateArray = [];
+          _selectedDateArray.add(date);
+        }
       }
     });
   }
