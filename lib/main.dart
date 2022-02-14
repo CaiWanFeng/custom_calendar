@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.yellow,
+        primarySwatch: Colors.pink,
       ),
       home: const MyHomePage(),
     );
@@ -241,7 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
         alignment: Alignment.center,
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.yellow,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             width: 2,
@@ -268,7 +268,7 @@ class _MyHomePageState extends State<MyHomePage> {
     DayModel model1 = DayModel();
     model1.fontColor = '#000000';
     model1.date = '2022/01/01';
-    model1.bgColor = '#FF3CAA';
+    model1.bgColor = '#abcdef';
     model1.id = '111';
 
     DayModel model2 = DayModel();
