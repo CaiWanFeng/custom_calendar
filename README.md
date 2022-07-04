@@ -6,7 +6,7 @@
 final firstDay = DateTime(year, month).weekday;
 ```
 
-## 2. number of days of this month (某年某月有多少天)
+## 2. number of days of this month (某年的某月有多少天)
 
 ```dart
 final days = DateUtils.getDaysInMonth(year, month);
